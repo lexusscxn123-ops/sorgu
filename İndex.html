@@ -3,589 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexus - Yönetim Konsolu</title>
+    <title>🕵️ OSINT Araçları Menüsü + EXIF Metadata</title>
+    <!-- EXIF.js kütüphanesi (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js">
+    </script>
     <style>
-        :root {
-            --bg-dark: #060709;
-            --bg-panel: #0d1117;
-            --bg-sidebar: #090c10;
-            --accent-red: #ff003c;
-            --accent-cyan: #00f0ff;
-            --text-main: #e6edf3;
-            --text-muted: #8b949e;
-            --border-glow: rgba(255, 0, 60, 0.2);
-            --success-color: #00ff66;
-        }
-
-        body, html {
+        * {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow: hidden;
-        }
-
-        /* ----- GİRİŞ SİSTEMİ ----- */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #050508 0%, #0c0d14 100%);
-            position: absolute;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s;
-        }
-
-        .auth-box {
-            background: var(--bg-panel);
-            border: 1px solid var(--accent-red);
-            padding: 40px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 360px;
-            box-shadow: 0 0 30px var(--border-glow);
-            text-align: center;
-        }
-
-        .auth-box h1 {
-            color: var(--accent-red);
-            font-size: 26px;
-            letter-spacing: 4px;
-            margin: 0 0 5px 0;
-            text-shadow: 0 0 10px rgba(255, 0, 60, 0.4);
-        }
-
-        .auth-box p {
-            color: var(--text-muted);
-            font-size: 11px;
-            margin: 0 0 30px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 11px;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            background: #000;
-            border: 1px solid #222;
-            color: #fff;
-            border-radius: 4px;
             box-sizing: border-box;
         }
-
-        .input-group input:focus {
-            border-color: var(--accent-cyan);
-            outline: none;
-        }
-
-        .auth-btn {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid var(--accent-red);
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-        }
-
-        .auth-btn:hover {
-            background: var(--accent-red);
-            box-shadow: 0 0 15px var(--accent-red);
-        }
-
-        /* ----- ANA UYGULAMA PANELİ ----- */
-        .app-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .sidebar {
-            width: 260px;
-            background: var(--bg-sidebar);
-            border-right: 1px solid #161b22;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .sidebar-brand {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0b0e14;
+            color: #e0e0e0;
             padding: 20px;
-            border-bottom: 1px solid #161b22;
-            font-weight: bold;
-            letter-spacing: 3px;
-            color: var(--accent-red);
-            font-size: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
             text-align: center;
+            color: #00ffc8;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            text-shadow: 0 0 20px rgba(0, 255, 200, 0.3);
         }
-
-        .sidebar-menu {
-            padding: 20px 10px;
-            flex-grow: 1;
-        }
-
-        .menu-title {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            padding-left: 10px;
-            margin: 15px 0 8px 0;
-            letter-spacing: 1px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            color: var(--text-main);
-            font-size: 13px;
-            border-radius: 6px;
-            margin-bottom: 5px;
-            transition: all 0.2s;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .menu-item:hover {
-            background: #161b22;
-            color: var(--accent-cyan);
-        }
-        
-        .menu-item.danger-item:hover {
-            color: var(--accent-red);
-        }
-
-        .sidebar-footer {
-            padding: 15px;
-            border-top: 1px solid #161b22;
-            font-size: 11px;
-            color: var(--text-muted);
+        .subtitle {
             text-align: center;
+            color: #8892a0;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            border-bottom: 1px solid #1e2a3a;
+            padding-bottom: 15px;
         }
-
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-dark);
-            height: 100%;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
-
-        .topbar {
-            height: 60px;
-            background: var(--bg-panel);
-            border-bottom: 1px solid #161b22;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            flex-shrink: 0;
+        .card {
+            background: #141c2b;
+            border-radius: 12px;
+            padding: 18px 20px;
+            border-left: 4px solid #00ffc8;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
-
-        .topbar-title {
-            font-size: 13px;
-            letter-spacing: 1px;
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 255, 200, 0.15);
         }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            color: #00ff66;
+        .card h3 {
+            color: #00ffc8;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
         }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #00ff66;
-            border-radius: 50%;
-            margin-right: 8px;
-            box-shadow: 0 0 8px #00ff66;
+        .card p {
+            font-size: 0.85rem;
+            color: #a8b2c8;
+            margin-bottom: 10px;
+            line-height: 1.4;
         }
-
-        .content-body {
+        .card a {
+            color: #64ffda;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        .card a:hover {
+            text-decoration: underline;
+            color: #fff;
+        }
+        .badge {
+            display: inline-block;
+            background: #1e2a3a;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #8892a0;
+            margin-top: 5px;
+        }
+        .section-title {
+            font-size: 1.6rem;
+            color: #00ffc8;
+            margin: 40px 0 20px 0;
+            border-bottom: 2px solid #1e2a3a;
+            padding-bottom: 10px;
+        }
+        /* EXIF Bölümü */
+        .exif-box {
+            background: #141c2b;
+            border-radius: 12px;
             padding: 30px;
-            overflow-y: auto;
-            flex-grow: 1;
+            margin: 30px 0;
+            border: 1px solid #1e2a3a;
         }
-
-        /* ----- MODAL SISTEMI ----- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
+        .exif-box h2 {
+            color: #00ffc8;
+            margin-bottom: 15px;
         }
-
-        .modal-content {
-            background: #151922;
-            border: 1px solid var(--accent-cyan);
-            padding: 25px;
+        .exif-box input[type="file"] {
+            background: #1e2a3a;
+            color: #e0e0e0;
+            padding: 12px;
+            border: 1px solid #2a3a4a;
             border-radius: 8px;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
-        }
-
-        .modal-content h3 {
-            margin-top: 0;
-            color: var(--accent-cyan);
-            border-bottom: 1px solid #222;
-            padding-bottom: 10px;
-            font-size: 16px;
-            letter-spacing: 1px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 13px;
-            color: #ccc;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #333;
-            color: #fff;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .modal-actions button {
-            background: #111;
-            color: #fff;
-            border: 1px solid #333;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 4px;
+            max-width: 400px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-
-        .modal-actions button.confirm-btn {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-        }
-
-        .modal-actions button.confirm-btn:hover {
-            background: var(--accent-cyan);
-            color: #000;
-        }
-
-        /* ----- PANEL / SONUÇLAR ----- */
-        .results-panel {
-            background: #0c1015;
-            border: 1px dashed #222;
+        .exif-box input[type="file"]::file-selector-button {
+            background: #00ffc8;
+            color: #0b0e14;
+            border: none;
+            padding: 8px 16px;
             border-radius: 6px;
-            padding: 25px;
-            min-height: 200px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 12px;
         }
-
-        .result-card {
-            background: #141922;
-            border-left: 4px solid var(--success-color);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
+        .exif-box input[type="file"]::file-selector-button:hover {
+            background: #66ffd9;
         }
-
-        .result-card h4 {
-            margin: 0 0 12px 0;
-            color: var(--success-color);
-            letter-spacing: 0.5px;
+        #exifOutput {
+            margin-top: 20px;
+            background: #0b0e14;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #1e2a3a;
+            color: #b0c0d0;
         }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-            font-size: 13px;
+        #exifOutput .key {
+            color: #00ffc8;
         }
-
-        .result-item {
-            background: #0d1117;
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid #21262d;
+        #exifOutput .value {
+            color: #f0f0f0;
+        }
+        .footer {
+            text-align: center;
+            color: #4a5a6a;
+            font-size: 0.8rem;
+            margin-top: 40px;
+            border-top: 1px solid #1e2a3a;
+            padding-top: 20px;
+        }
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🕵️ OSINT Araçları</h1>
+        <div class="subtitle">🔍 Kullanıcı adı, e-posta, domain, ağ keşfi &amp; daha fazlası</div>
 
-    <!-- GİRİŞ MODÜLÜ -->
-    <div class="auth-container" id="authScreen">
-        <div class="auth-box">
-            <h1>LEXUS</h1>
-            <p>GÜVENLİ ERİŞİM PROTOKOLÜ</p>
-            
-            <div class="input-group">
-                <label>Erişim Anahtarı</label>
-                <input type="text" id="username" value="admin">
+        <!-- ===== MENÜ KARTLARI ===== -->
+        <div class="grid">
+
+            <!-- Sherlock -->
+            <div class="card">
+                <h3>🔎 Sherlock</h3>
+                <p>400'den fazla sosyal ağda kullanıcı adı araştırması. En bilinen OSINT aracı.</p>
+                <a href="https://github.com/sherlock-project/sherlock" target="_blank">github.com/sherlock-project/sherlock</a>
+                <div class="badge">⭐ 400+ site</div>
             </div>
-            <div class="input-group">
-                <label>Şifreleme Kodu</label>
-                <input type="password" id="password" value="lexus1337">
+
+            <!-- WhatsMyName -->
+            <div class="card">
+                <h3>📋 WhatsMyName</h3>
+                <p>732 site için JSON veritabanı. Blackbird, recon-ng, Maltego, SpiderFoot ile entegre.</p>
+                <a href="https://github.com/WebBreacher/WhatsMyName" target="_blank">github.com/WebBreacher/WhatsMyName</a>
+                <div class="badge">📦 732 site</div>
             </div>
-            
-            <button class="auth-btn" onclick="loginSystem()">SİSTEME BAĞLAN</button>
+
+            <!-- UserRecon -->
+            <div class="card">
+                <h3>👤 UserRecon</h3>
+                <p>75+ sosyal ağda kullanıcı adı tarama. Bash script, Linux/Windows çalışır.</p>
+                <a href="https://github.com/thelinuxchoice/userrecon" target="_blank">github.com/thelinuxchoice/userrecon</a>
+                <div class="badge">🐧 Bash</div>
+            </div>
+
+            <!-- userrecon-py -->
+            <div class="card">
+                <h3>🐍 userrecon-py</h3>
+                <p>187 sosyal ağda kullanıcı adı tanıma. Python 3 ile yazılmıştır.</p>
+                <a href="https://github.com/decoxviii/userrecon-py" target="_blank">github.com/decoxviii/userrecon-py</a>
+                <div class="badge">🐍 Python</div>
+            </div>
+
+            <!-- OSINT Namecheckers List -->
+            <div class="card">
+                <h3>📚 OSINT Namecheckers</h3>
+                <p>Kullanıcı adı arama araçlarının küratörlü listesi (Maigret, Enola, Blackbird, vs.)</p>
+                <a href="https://github.com/soxoj/osint-namecheckers-list" target="_blank">github.com/soxoj/osint-namecheckers-list</a>
+                <div class="badge">📌 Küratör</div>
+            </div>
+
+            <!-- SpiderFoot -->
+            <div class="card">
+                <h3>🕸️ SpiderFoot</h3>
+                <p>309+ veri kaynağı ile OSINT otomasyonu. IP, domain, e-posta, telefon, BTC adresi.</p>
+                <a href="https://github.com/smicallef/spiderfoot" target="_blank">github.com/smicallef/spiderfoot</a>
+                <div class="badge">⚙️ 309+ kaynak</div>
+            </div>
+
+            <!-- theHarvester -->
+            <div class="card">
+                <h3>📧 theHarvester</h3>
+                <p>Domain üzerinden e-posta, alt alan adı, IP, URL toplama. 50'den fazla kaynak.</p>
+                <a href="https://github.com/laramies/theHarvester" target="_blank">github.com/laramies/theHarvester</a>
+                <div class="badge">📧 50+ kaynak</div>
+            </div>
+
+            <!-- Recon-ng -->
+            <div class="card">
+                <h3>🧩 Recon-ng</h3>
+                <p>Metasploit benzeri modüler keşif framework'ü. Web tabanlı OSINT için güçlü.</p>
+                <a href="https://github.com/lanmaster53/recon-ng" target="_blank">github.com/lanmaster53/recon-ng</a>
+                <div class="badge">🧩 Modüler</div>
+            </div>
+
+            <!-- Maltego -->
+            <div class="card">
+                <h3>📊 Maltego</h3>
+                <p>OSINT verilerini grafiksel olarak bağlayan görsel analiz aracı. Community ücretsiz.</p>
+                <a href="https://www.maltego.com/downloads/" target="_blank">maltego.com/downloads</a>
+                <div class="badge">📊 Görsel</div>
+            </div>
+
+            <!-- Shodan -->
+            <div class="card">
+                <h3>🌐 Shodan</h3>
+                <p>İnternet bağlantılı cihazlar için arama motoru. IoT, kamera, sunucu keşfi.</p>
+                <a href="https://www.shodan.io/" target="_blank">shodan.io</a>
+                <div class="badge">🌍 IoT</div>
+            </div>
+
+        </div>
+
+        <!-- ===== EXIF METADATA BÖLÜMÜ ===== -->
+        <div class="section-title">📷 EXIF Metadata Okuyucu</div>
+        <div class="exif-box">
+            <h2>📸 Görsel Yükle – EXIF Verilerini Oku</h2>
+            <p style="color:#8892a0; margin-bottom:15px;">JPEG, PNG, TIFF, WebP dosyalarındaki EXIF, GPS, IPTC ve XMP verilerini gösterir.</p>
+            <input type="file" id="fileInput" accept="image/*">
+            <div id="exifOutput">📂 Bir görsel dosyası seçin...</div>
+        </div>
+
+        <div class="footer">
+            🛡️ Tüm araçlar açık kaynaktır. Yalnızca eğitim ve izinli testler için kullanılmalıdır.
         </div>
     </div>
 
-    <!-- ANA PANEL -->
-    <div class="app-container" id="appPanel">
-        
-        <!-- SIDEBAR MENÜ -->
-        <div class="sidebar">
-            <div>
-                <div class="sidebar-brand">LEXUS</div>
-                <div class="sidebar-menu">
-                    <div class="menu-title">Sorgu İstasyonları</div>
-                    <div class="menu-item" onclick="openModal('adsoyadModal')">🔍 Ad Soyad Sorgu</div>
-                    <div class="menu-item" onclick="openModal('tcModal')">🆔 TC Sorgu</div>
-                    <div class="menu-item" onclick="openModal('sulaleModal')">👥 Sülale Sorgu</div>
-                    <div class="menu-item" onclick="openModal('gsmtcModal')">📱 GSM -> TC</div>
-                    <div class="menu-item" onclick="openModal('tcgsmModal')">📱 TC -> GSM</div>
-                    <div class="menu-item" onclick="openModal('adresModal')">📍 Adres Sorgu</div>
-                    <div class="menu-item" onclick="openModal('ipModal')">🌐 IP / Sunucu Sorgu</div>
-                    
-                    <div class="menu-title">Araçlar</div>
-                    <div class="menu-item danger-item" onclick="clearResults()">🗑️ Ekranı Temizle</div>
-                </div>
-            </div>
-            <div class="sidebar-footer">
-                Lexus Core v4.0 // 2026
-            </div>
-        </div>
+    <script>
+        (function() {
+            const fileInput = document.getElementById('fileInput');
+            const output = document.getElementById('exifOutput');
 
-        <!-- SAĞ İÇERİK ALANI -->
-        <div class="main-content">
-            <div class="topbar">
-                <div class="topbar-title">Terminal Durumu: <span style="color: var(--accent-cyan); font-weight: bold;">YETKİLENDİRİLDİ</span></div>
-                <div class="status-indicator">
-                    <div class="status-dot"></div> ÇEVRİMİÇİ VERİ HATTI
-                </div>
-            </div>
+            function formatValue(value) {
+                if (value === undefined || value === null) return '—';
+                if (typeof value === 'object') {
+                    try {
+                        return JSON.stringify(value, null, 2);
+                    } catch (_) {
+                        return String(value);
+                    }
+                }
+                return String(value);
+            }
 
-            <div class="content-body">
-                <div class="results-panel" id="resultsPanel">
-                    <span style="color: var(--text-muted);">Sistem aktif. Yapmak istediğiniz işlemi sol menüden seçiniz...</span>
-                </div>
-            </div>
-        </div>
-    </div>
+            function displayExifData(exifData, fileName) {
+                if (!exifData || Object.keys(exifData).length === 0) {
+                    output.innerHTML = `⚠️ <span style="color:#ffb86b;">Dosya "${fileName}"</span> içinde EXIF verisi bulunamadı.`;
+                    return;
+                }
 
-    <!-- MODALLAR -->
-    <div id="adsoyadModal" class="modal">
-        <div class="modal-content">
-            <h3>🔍 Ad Soyad Sorgulama</h3>
-            <div class="form-group"><label>Ad</label><input type="text" id="as_ad"></div>
-            <div class="form-group"><label>Soyad</label><input type="text" id="as_soyad"></div>
-            <div class="form-group"><label>İl (Opsiyonel)</label><input type="text" id="as_il"></div>
-            <div class="form-group"><label>İlçe (Opsiyonel)</label><input type="text" id="as_ilce"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('adsoyadModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('adsoyad')">Sorgula</button>
-            </div>
-        </div>
-    </div>
+                let html = `📄 <span style="color:#00ffc8;">${fileName}</span>\n${'─'.repeat(50)}\n`;
+                const sortedKeys = Object.keys(exifData).sort();
+                for (const key of sortedKeys) {
+                    const val = exifData[key];
+                    if (val === undefined || val === null) continue;
+                    // Bazı EXIF değerleri çok büyük olabilir, kısaltalım
+                    let displayVal = formatValue(val);
+                    if (displayVal.length > 500) {
+                        displayVal = displayVal.substring(0, 500) + '... (kesildi)';
+                    }
+                    html += `<span class="key">${key}</span> : <span class="value">${displayVal}</span>\n`;
+                }
+                output.innerHTML = html;
+            }
 
-    <div id="tcModal" class="modal">
-        <div class="modal-content">
-            <h3>🆔 TC Kimlik Sorgulama</h3>
-            <div class="form-group"><label>TC Numarası</label><input type="text" id="tc_no" maxlength="11"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('tcModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('tc')">Sorgula</button>
-            </div>
-        </div>
-    </div>
+            function readExif(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = e.target.result;
+                        // EXIF.js ile oku
+                        EXIF.getData(data, function() {
+                            const allMeta = EXIF.getAllTags(this);
+                            displayExifData(allMeta, file.name);
+                        });
+                    } catch (err) {
+                        output.innerHTML = `❌ Hata: ${err.message}`;
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
 
-    <div id="sulaleModal" class="modal">
-        <div class="modal-content">
-            <h3>👥 Sülale Sorgulama</h3>
-            <div class="form-group"><label>TC Numarası</label><input type="text" id="sulale_tc" maxlength="11"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('sulaleModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('sulale')">Sorgula</button>
-            </div>
-        </div>
-    </div>
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) {
+                    output.innerHTML = '📂 Bir görsel dosyası seçin...';
+                    return;
+                }
+                // Tip kontrolü (görsel)
+                if (!file.type.startsWith('image/')) {
+                    output.innerHTML = '⚠️ Lütfen geçerli bir görsel dosyası seçin (JPEG, PNG, TIFF, WebP).';
+                    return;
+                }
+                output.innerHTML = `⏳ "${file.name}" okunuyor...`;
+                readExif(file);
+            });
 
-    <div id="gsmtcModal" class="modal">
-        <div class="modal-content">
-            <h3>📱 GSM -> TC Sorgulama</h3>
-            <div class="form-group"><label>GSM No (Sıfırsız)</label><input type="text" id="gsm_no" maxlength="10"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('gsmtcModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('gsmtc')">Sorgula</button>
-            </div>
-        </div>
-    </div>
+        })();
+    </script>
 
-    <div id="tcgsmModal" class="modal">
-        <div class="modal-content">
-            <h3>📱 TC -> GSM Sorgulama</h3>
-            <div class="form-group"><label>TC Numarası</label><input type="text" id="tc_gsm_no" maxlength="11"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('tcgsmModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('tcgsm')">Sorgula</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="adresModal" class="modal">
-        <div class="modal-content">
-            <h3>📍 Adres Sorgulama</h3>
-            <div class="form-group"><label>TC Numarası</label><input type="text" id="adres_tc" maxlength="11"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('adresModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('adres')">Sorgula</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="ipModal" class="modal">
-        <div class="modal-content">
-            <h3>🌐 IP Analiz İstasyonu</h3>
-            <div class="form-group"><label>IP Adresi</label><input type="text" id="ip_addr" placeholder="Boş bırakılırsa yerel IP"></div>
-            <div class="modal-actions">
-                <button onclick="closeModal('ipModal')">İptal</button>
-                <button class="confirm-btn" onclick="submitSorgu('ip')">Sorgula</button>
-            </div>
-        </div>
-    </div>
-
-<script>
-    const API_BASE = "https://arastir.vip/api";
-
-    function loginSystem() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        if(u === "admin" && p === "lexus1337") {
-            document.getElementById('authScreen').style.display = 'none';
-            const panel = document.getElementById('appPanel');
-            panel.style.visibility = 'visible';
-            panel.style.opacity = '1';
-        } else {
-            alert("Hatalı kimlik doğrulaması!");
-        }
-    }
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function clearResults() { document.getElementById('resultsPanel').innerHTML = '<span style="color: var(--text-muted);">Sistem temizlendi. Komut bekleniyor...</span>'; }
-
-    async function defFetch(url) {
-        try {
-            let res = await fetch(url);
-            return await res.json();
-        } catch (e) {
-            return { error: true, message: e.message };
-        }
-    }
-
-    async function submitSorgu(type) {
-        let panel = document.getElementById('resultsPanel');
-        panel.innerHTML = `<span style="color: var(--accent-cyan);">🔄 Veri havuzundan asenkron çıktılar alınıyor, bekleyin...</span>`;
-        
-        if(type === 'adsoyad') {
-            closeModal('adsoyadModal');
-            let ad = document.getElementById('as_ad').value.toUpperCase();
-            let soyad = document.getElementById('as_soyad').value.toUpperCase();
-            let il = document.getElementById('as_il').value.toUpperCase();
-            let ilce = document.getElementById('as_ilce').value.toUpperCase();
-            let data = await defFetch(`${API_BASE}/adsoyad.php?adi=${ad}&soyadi=${soyad}&il=${il}&ilce=${ilce}`);
-            renderListResults(data, "AD SOYAD ANALİZ SONUCU");
-        }
-        else if(type === 'tc') {
-            closeModal('tcModal');
-            let tc = document.getElementById('tc_no').value;
-            let data = await defFetch(`${API_BASE}/tc.php?tc=${tc}`);
-            renderSingleResult(data, "TC VERİ DETAYI");
-        }
-        else if(type === 'sulale') {
-            closeModal('sulaleModal');
-            let tc = document.getElementById('sulale_tc').value;
-            let data = await defFetch(`${API_BASE}/sulale.php?tc=${tc}`);
-            renderListResults(data, "SÜLALE SOY AĞACI MATRİSİ");
-        }
-        else if(type === 'gsmtc') {
-            closeModal('gsmtcModal');
-            let gsm = document.getElementById('gsm_no').value;
-            let data = await defFetch(`${API_BASE}/gsmtc.php?gsm=${gsm}`);
-            renderSingleResult(data, "GSM -> TC VERİ BAĞLANTISI");
-        }
-        else if(type === 'tcgsm') {
-            closeModal('tcgsmModal');
-            let tc = document.getElementById('tc_gsm_no').value;
-            let data = await defFetch(`${API_BASE}/tcgsm.php?tc=${tc}`);
-            renderListResults(data, "TC -> GSM MOBİL HARİTALAMA");
-        }
-        else if(type === 'adres') {
-            closeModal('adresModal');
-            let tc = document.getElementById('adres_tc').value;
-            let data = await defFetch(`${API_BASE}/adres.php?tc=${tc}`);
-            renderSingleResult(data, "LOKASYON / YERLEŞİM BİLGİSİ");
-        }
-        else if(type === 'ip') {
-            closeModal('ipModal');
-            let ip = document.getElementById('ip_addr').value;
-            let url = ip ? `https://ip-api.com/json/${ip}` : `https://ip-api.com/json/`;
-            let data = await defFetch(url);
-            renderIPResult(data);
-        }
-    }
-
-    function renderSingleResult(data, title) {
-        let panel = document.getElementById('resultsPanel');
-        if(!data || data.error || (Array.isArray(data) && data.length === 0)) {
-            panel.innerHTML = `<span style="color: var(--accent-red);">❌ Veri hatası: Eşleşen kayıt bulunamadı veya API hatası.</span>`;
-            return;
-        }
-        let kisi = Array.isArray(data) ? data[0] : data;
-        let html = `<div class="result-card"><h4>📊 ${title}</h4><div class="result-grid">`;
-        for (let [key, val] of Object.entries(kisi)) {
-            html += `<div class="result-item"><strong>${key}:</strong> ${val || '?'}</div>`;
-        }
-   
+</body>
+</html>
